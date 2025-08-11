@@ -30,6 +30,7 @@ model User {
   updatedAt   DateTime      @updatedAt
   appointmentsAsPatient Appointment[] @relation("PatientAppointments")
   appointmentsAsProvider Appointment[] @relation("ProviderAppointments")
+  availabilities ProviderAvailability[] @relation("ProviderAvailabilities")
 }
 
 enum AppointmentStatus {
@@ -52,4 +53,15 @@ model Appointment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProviderAvailability{
+  id String @id @default(cuid())
+  dayOfWeek Int
+  startTime String
+  endTime String
+  provider User @relation("ProviderAvailabilities", fields: [providerId], references: [id])
+  providerId String
+
+  @@unique([providerId, dayOfWeek])
 }
