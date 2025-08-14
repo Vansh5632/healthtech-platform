@@ -21,16 +21,18 @@ enum Role {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  email       String        @unique
-  password    String
-  name        String?
-  role        Role          @default(PATIENT)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  appointmentsAsPatient Appointment[] @relation("PatientAppointments")
-  appointmentsAsProvider Appointment[] @relation("ProviderAppointments")
-  availabilities ProviderAvailability[] @relation("ProviderAvailabilities")
+  id                     String                 @id @default(cuid())
+  email                  String                 @unique
+  password               String
+  name                   String?
+  role                   Role                   @default(PATIENT)
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  appointmentsAsPatient  Appointment[]          @relation("PatientAppointments")
+  appointmentsAsProvider Appointment[]          @relation("ProviderAppointments")
+  availabilities         ProviderAvailability[] @relation("ProviderAvailabilities")
+  ehrRecordAsPatient     EHRRecord[]            @relation("PatientEHRRecords")
+  ehrRecordAsProvider    EHRRecord[]            @relation("ProviderCreatedEHRRecords")
 }
 
 enum AppointmentStatus {
@@ -48,20 +50,39 @@ model Appointment {
   patient   User   @relation("PatientAppointments", fields: [patientId], references: [id])
   patientId String
 
-  provider User @relation("ProviderAppointments",fields: [providerId],references: [id])
+  provider   User   @relation("ProviderAppointments", fields: [providerId], references: [id])
   providerId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model ProviderAvailability{
-  id String @id @default(cuid())
-  dayOfWeek Int
-  startTime String
-  endTime String
-  provider User @relation("ProviderAvailabilities", fields: [providerId], references: [id])
+model ProviderAvailability {
+  id         String @id @default(cuid())
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+  provider   User   @relation("ProviderAvailabilities", fields: [providerId], references: [id])
   providerId String
 
   @@unique([providerId, dayOfWeek])
+}
+
+enum EHRRecordType {
+  CLINICAL_NOTE
+  LAB_RESULT
+  IMAGING_STUDY
+}
+
+model EHRRecord {
+  id         String        @id @default(cuid())
+  recordType EHRRecordType
+  content    Json
+  createdAt  DateTime
+  updatedAt  DateTime
+
+  patient    User   @relation("PatientEHRRecords", fields: [patientId], references: [id])
+  patientId  String
+  provider   User   @relation("ProviderCreatedEHRRecords", fields: [providerId], references: [id])
+  providerId String
 }
