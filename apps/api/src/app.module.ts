@@ -11,7 +11,16 @@ import { StorageModule } from './storage/storage.module';
 import { VideoModule } from './video/video.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, AppointmentsModule, AvailabilityModule, EhrModule, PrescriptionsModule, StorageModule, VideoModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    AppointmentsModule,
+    AvailabilityModule,
+    EhrModule,
+    PrescriptionsModule,
+    StorageModule,
+    VideoModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
