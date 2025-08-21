@@ -9,6 +9,7 @@ import { EhrModule } from './ehr/ehr.module';
 import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { StorageModule } from './storage/storage.module';
 import { VideoModule } from './video/video.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { VideoModule } from './video/video.module';
     PrescriptionsModule,
     StorageModule,
     VideoModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
