@@ -18,7 +18,7 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     const { providerId, startTime, endTime } = CreateAppointmentDto;
 
-    return this.prisma.appointment.create({
+    return await this.prisma.appointment.create({
       data: {
         startTime: new Date(startTime),
         endTime: new Date(endTime),
@@ -34,6 +34,14 @@ export class AppointmentsService {
     return this.prisma.appointment.findMany({
       where: whereClause,
       orderBy: { startTime: 'asc' },
+      include: {
+        patient: {
+          select: { id: true, email: true, name: true },
+        },
+        provider: {
+          select: { id: true, email: true, name: true },
+        },
+      },
     });
   }
   async updateStatus(
