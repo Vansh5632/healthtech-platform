@@ -3,9 +3,8 @@
 import api from "@/lib/api";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { scheduler } from "timers/promises";
 
 interface ScheduleSlot {
   dayOfWeek: number;
@@ -28,7 +27,7 @@ const setAvailability = (schedule: { schedule: ScheduleSlot[] }) => {
 };
 
 export default function AvailabilityPage() {
-  const { user } = useAuthStore;
+  const { user } = useAuthStore();
   const router = useRouter();
 
   const [schedule, setSchedule] = useState<ScheduleSlot[]>(
@@ -50,18 +49,32 @@ export default function AvailabilityPage() {
   ]);
 
   useEffect(() => {
-    if (user && user.role !== "DOCTOR") {
-      router.push("dashboard");
+    if (user && user.role !== "PROVIDER") {
+      router.push("/dashboard");
     }
   }, [user, router]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: setAvailability,
     onSuccess: () => {
-      alert("Availability updated successfully");
+      // Replace alert with toast notification
+      const successDiv = document.createElement('div');
+      successDiv.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+      successDiv.textContent = 'Availability updated successfully!';
+      document.body.appendChild(successDiv);
+      setTimeout(() => {
+        successDiv.remove();
+      }, 3000);
     },
     onError: (error) => {
-      alert(`Failed to update availability:${error.message}`);
+      // Replace alert with toast notification
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+      errorDiv.textContent = `Failed to update availability: ${error.message}`;
+      document.body.appendChild(errorDiv);
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 5000);
     },
   });
 
